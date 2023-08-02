@@ -26,7 +26,7 @@ export async function getStaticPaths() {
   const from = 'slug-paths'
   const { allPages } = await getGlobalData({ from })
   return {
-    paths: allPages?.filter(row => row.slug.indexOf('/') > 0).map(row => ({ params: { prefix: row.slug.split('/')[0], slug: row.slug.split('/')[1] } })),
+    paths: allPages?.filter(row => row.slug.indexOf('/') > 0 && row.type.indexOf('Menu') < 0).map(row => ({ params: { prefix: row.slug.split('/')[0], slug: row.slug.split('/')[1] } })),
     fallback: true
   }
 }
@@ -70,7 +70,7 @@ export async function getStaticProps({ params: { prefix, slug } }) {
   }
 
   // 推荐关联文章处理
-  const allPosts = props.allPages.filter(page => page.type === 'Post' && page.status === 'Published')
+  const allPosts = props.allPages?.filter(page => page.type === 'Post' && page.status === 'Published')
   if (allPosts && allPosts.length > 0) {
     const index = allPosts.indexOf(props.post)
     props.prev = allPosts.slice(index - 1, index)[0] ?? allPosts.slice(-1)[0]

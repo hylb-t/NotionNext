@@ -20,6 +20,7 @@ import dynamic from 'next/dynamic'
 import { AdSlot } from '@/components/GoogleAdsense'
 import { Style } from './style'
 import replaceSearchResult from '@/components/Mark'
+import CommonHead from '@/components/CommonHead'
 
 const Live2D = dynamic(() => import('@/components/Live2D'))
 
@@ -42,7 +43,7 @@ export const useFukasawaGlobal = () => useContext(ThemeGlobalFukasawa)
  * @constructor
  */
 const LayoutBase = (props) => {
-  const { children, headerSlot } = props
+  const { children, headerSlot, meta } = props
   const leftAreaSlot = <Live2D />
   const { onLoading } = useGlobal()
 
@@ -56,7 +57,7 @@ const LayoutBase = (props) => {
 
   // 在组件卸载时保存 open 状态到本地存储中
   useEffect(() => {
-    if (isBrowser()) {
+    if (isBrowser) {
       localStorage.setItem('fukasawa-sidebar-collapse', isCollapsed)
     }
   }, [isCollapsed])
@@ -65,6 +66,8 @@ const LayoutBase = (props) => {
         <ThemeGlobalFukasawa.Provider value={{ isCollapsed, setIsCollapse }}>
 
             <div id='theme-fukasawa'>
+                {/* SEO信息 */}
+                <CommonHead meta={meta}/>
                 <Style/>
 
                 <TopNav {...props} />
@@ -146,7 +149,7 @@ const LayoutSearch = props => {
   const { keyword } = props
   const router = useRouter()
   useEffect(() => {
-    if (isBrowser()) {
+    if (isBrowser) {
       replaceSearchResult({
         doms: document.getElementById('posts-wrapper'),
         search: keyword,

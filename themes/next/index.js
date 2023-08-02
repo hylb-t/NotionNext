@@ -25,6 +25,7 @@ import BlogListBar from './components/BlogListBar'
 import { Transition } from '@headlessui/react'
 import { Style } from './style'
 import replaceSearchResult from '@/components/Mark'
+import CommonHead from '@/components/CommonHead'
 
 /**
  * 基础布局 采用左中右三栏布局，移动端使用顶部导航栏
@@ -32,7 +33,7 @@ import replaceSearchResult from '@/components/Mark'
  * @constructor
  */
 const LayoutBase = (props) => {
-  const { children, headerSlot, floatSlot, rightAreaSlot, siteInfo } = props
+  const { children, headerSlot, floatSlot, rightAreaSlot, siteInfo, meta } = props
   const { onLoading } = useGlobal()
   const targetRef = useRef(null)
   const floatButtonGroup = useRef(null)
@@ -69,6 +70,8 @@ const LayoutBase = (props) => {
 
   return (
         <div id='theme-next'>
+            {/* SEO相关 */}
+            <CommonHead meta={meta}/>
             <Style/>
 
             {/* 移动端顶部导航栏 */}
@@ -158,7 +161,7 @@ const LayoutSearch = (props) => {
   const { posts, keyword } = props
 
   useEffect(() => {
-    if (isBrowser()) {
+    if (isBrowser) {
       replaceSearchResult({
         doms: document.getElementById('posts-wrapper'),
         search: keyword,
@@ -198,7 +201,7 @@ const Layout404 = props => {
   useEffect(() => {
     // 延时3秒如果加载失败就返回首页
     setTimeout(() => {
-      const article = isBrowser() && document.getElementById('article-wrapper')
+      const article = isBrowser && document.getElementById('article-wrapper')
       if (!article) {
         router.push('/').then(() => {
           // console.log('找不到页面', router.asPath)
@@ -250,7 +253,7 @@ const LayoutArchive = (props) => {
 const LayoutSlug = (props) => {
   const { post, lock, validPassword } = props
   const drawerRight = useRef(null)
-  const targetRef = isBrowser() ? document.getElementById('article-wrapper') : null
+  const targetRef = isBrowser ? document.getElementById('article-wrapper') : null
   const floatSlot = <div className='block lg:hidden'>
         <TocDrawerButton onClick={() => {
           drawerRight?.current?.handleSwitchVisible()
